@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const {z, ZodError} = require('zod');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { secretKey } = require("../middleware/auth")
+const { authenticateJwt } = require("../middleware/auth");
 const User = require('../db/index')
 
 const signupSchema = z.object({
@@ -40,6 +43,23 @@ router.post('/signup', async (req, res) => {
     }
     
 
+})
+
+router.post('/signin' , async (req,res) => {
+    const email = req.body.email;
+    const user = await User.findOne({ email });
+    if (user) {
+        const token = jwt.sign(email, secretKey, { expiresIn: '1h' });
+
+        res.status(200).json({
+            msg: "Welcome back! Signed in successfully",token
+        })
+    }
+    else {
+        res.status(401).json({
+            msg: "Invalid username or password,please signup"
+        });
+    }
 })
 
 

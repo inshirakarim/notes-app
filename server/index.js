@@ -1,24 +1,27 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
-const userRouter = require('./routes/user');
+const mongoose = require('mongoose');
+const port = 3000;
+const userRouter = require('./routes/user')
+const journalRouter = require('./routes/journal')
+require("dotenv").config();
+const MongoDBURL = process.env.MONGODB_URL;
+
 
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
+app.use("/user" , userRouter);
+app.use("/user" , journalRouter);
 
-// Routes
-app.use('/user', userRouter);
-app.get('/', (req, res) => res.json({ msg: 'Welcome to notes app!!!!' }));
+app.get('/' , (req, res) => {
+    res.status(200).json({
+        msg: 'Welcome to the journal app'
+    })
+})
 
-// Connect to MongoDB
-// DONT MISUSE THIS THANKYOU!!
- mongoose.connect('mongodb+srv://kariminshira:kvq8BaPCVx01XXzJ@cluster0.7dlxsvw.mongodb.net/notes', { useNewUrlParser: true, useUnifiedTopology: true, dbName: "notes" });
+mongoose.connect(MongoDBURL)
 
-const host = '127.0.0.1'; // Bind to the local loopback interface
-const port = 3000;
-app.listen(port, host, () => {
-  console.log(`Server is running on http://${host}:${port}`);
-});
+app.listen(port, () => {
+    console.log(`server listening on port ${port}` );
+})

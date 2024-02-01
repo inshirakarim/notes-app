@@ -20,7 +20,9 @@ app.get('/' , (req, res) => {
     })
 })
 
-mongoose.connect(MongoDBURL)
+mongoose.connect(MongoDBURL,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true})
 
 app.listen(port, () => {
     console.log(`server listening on port ${port}` );
